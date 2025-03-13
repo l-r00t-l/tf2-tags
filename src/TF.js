@@ -1,8 +1,10 @@
+import {UTILS} from './UTILS';
 
 export const TF = (function () {
   "use strict";
   var playersMap = new Map();
   var tagsMap = new Map();
+
   // public
   return {
     // Load saved tags and players db
@@ -35,25 +37,30 @@ export const TF = (function () {
     },
     saveTags: function () {
       chrome.storage.sync.set({
-        "tagsMap": Object.fromEntries(tagsMap),
-      }).then(() => console.log("Saved tags."));
+        "tagsMap": UTILS.serializeMap(tagsMap)
+      }).then(() => {
+        console.log("Saved tags.")
+      });
     },
     savePlayers: function () {
       chrome.storage.sync.set({
-        "playersMap": Object.fromEntries(playersMap),
+        "playersMap": UTILS.serializeMap(playersMap),
       }).then(() => console.log("Saved players."));
     },
     loadTags: function () {
       chrome.storage.sync.get(["tagsMap"]).then(result => {
-        tagsMap = new Map(Object.entries(result.tagsMap));
+        tagsMap = UTILS.unserializeMap(result.tagsMap);
         console.log("Loaded tags:", result);
       });
     },
     loadPlayers: function () {
       chrome.storage.sync.get(["playersMap"]).then(result => {
-        playersMap = new Map(Object.entries(result.playersMap));
+        playersMap = UTILS.unserializeMap(result.playersMap);
         console.log("Loaded players:", result);
       })
+    },
+    getTags: function () {
+      return tagsMap;
     },
     getPlayerTags: function (playerId) {
       return playersMap.get(playerId);
