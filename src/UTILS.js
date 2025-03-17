@@ -4,7 +4,7 @@ export const UTILS = (function() {
     serializeMap: function (map) {
       return Object.fromEntries(map);
     },
-    unserializeMap: function (serializedMap) {
+    deserializeMap: function (serializedMap) {
       return new Map(Object.entries(serializedMap));
     }
   }

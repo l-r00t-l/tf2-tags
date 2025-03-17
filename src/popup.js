@@ -63,6 +63,22 @@ import { UTILS } from './UTILS';
     openTab(e, 'settings');
   });
 
+  document.getElementById('settingsSaveTags').addEventListener('click', (e) => {
+    TF.saveTags();
+  })
+
+  document.getElementById('settingsSavePlayers').addEventListener('click', (e) => {
+    TF.savePlayers();
+  })
+
+  document.getElementById('settingsLoadTags').addEventListener('click', (e) => {
+    TF.loadTags();
+  })
+
+  document.getElementById('settingsLoadPlayers').addEventListener('click', (e) => {
+    TF.loadPlayers();
+  })
+
   document.getElementById('tagsAddTag').addEventListener('click', (e) => {
     const tagName = document.getElementById('tagsNewTagName').value;
     const tagPriority = parseInt(document.getElementById('tagsNewTagPriority').value);
@@ -70,13 +86,18 @@ import { UTILS } from './UTILS';
       command: 'addTag',
       name: tagName,
       priority: tagPriority,
-    }).then(r => console.log('[popup.js]\t', r));
+    }).then(r => {
+      if(document.getElementById('checkboxAutoSaveTags').checked) {
+        console.log("Auto saving tags.");
+        TF.saveTags();
+      }
+    });
   });
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.command) {
       case 'updateTagsDisplay': {
-        const deserializedTagsMap = UTILS.unserializeMap(request.tagsMap);
+        const deserializedTagsMap = UTILS.deserializeMap(request.tagsMap);
         console.log('[popup.js] Received tags map: ', deserializedTagsMap);
         const tableContainer = document.getElementById('tagsTableContainer');
         if (tableContainer.children.length > 0) {

@@ -44,7 +44,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.command) {
     case 'addTag': {
       TF.addTag(request.name, request.priority);
-      TF.saveTags();
       resp = "Added new tag:" + request.name + " priority:" + request.priority;
       break;
     }

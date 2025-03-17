@@ -36,10 +36,15 @@ export const TF = (function () {
       console.log("Added new tag:",name, priority);
     },
     saveTags: function () {
+      const serializedTags = UTILS.serializeMap(tagsMap);
       chrome.storage.sync.set({
-        "tagsMap": UTILS.serializeMap(tagsMap)
+        "tagsMap": serializedTags,
       }).then(() => {
         console.log("Saved tags.")
+        chrome.runtime.sendMessage({
+          command: "updateTagsDisplay",
+          tagsMap: serializedTags
+        }).then(r => console.log("[TF.js | saveTags()] Requested tags html update."));
       });
     },
     savePlayers: function () {
@@ -49,13 +54,17 @@ export const TF = (function () {
     },
     loadTags: function () {
       chrome.storage.sync.get(["tagsMap"]).then(result => {
-        tagsMap = UTILS.unserializeMap(result.tagsMap);
+        tagsMap = UTILS.deserializeMap(result.tagsMap);
         console.log("Loaded tags:", result);
+        chrome.runtime.sendMessage({
+          command: "updateTagsDisplay",
+          tagsMap: result.tagsMap
+        }).then(r => console.log("[TF.js | loadTags()] Requested tags html update."));
       });
     },
     loadPlayers: function () {
       chrome.storage.sync.get(["playersMap"]).then(result => {
-        playersMap = UTILS.unserializeMap(result.playersMap);
+        playersMap = UTILS.deserializeMap(result.playersMap);
         console.log("Loaded players:", result);
       })
     },
